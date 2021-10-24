@@ -1,0 +1,5 @@
+namespace: postgres-operator
+
+resources:
+- broker.yaml
+- topics.yaml

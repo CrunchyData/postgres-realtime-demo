@@ -1,0 +1,9 @@
+namespace: postgres-operator
+
+resources:
+  - pod.yaml
+
+# Uncomment this section and set "newName" to the name of the image in your registry
+# images:
+#   - name: crunchydata/postgres-realtime-demo
+#     newName: your-registry/postgres-realtime-demo

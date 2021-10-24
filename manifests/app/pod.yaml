@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-realtime-process
+spec:
+  containers:
+  - name: walconsumer
+    image: crunchydata/postgres-realtime-demo:latest
+    imagePullPolicy: IfNotPresent
+    command: ['python3', '/app/walconsumer.py']
+    env:
+      - name: STRIMZI_KAFKA_BOOTSTRAP_SERVERS
+        valueFrom:
+          configMapKeyRef:
+            name: my-cluster-kafka-config
+            key: advertised-hostnames.config
+      - name: POSTGRES_URI
+        valueFrom:
+          secretKeyRef:
+            name: realtime-pguser-postgres
+            key: uri
+  - name: room
+    image: crunchydata/postgres-realtime-demo:latest
+    imagePullPolicy: IfNotPresent
+    command: ['python3', '/app/workers/room.py']
+    env:
+      - name: STRIMZI_KAFKA_BOOTSTRAP_SERVERS
+        valueFrom:
+          configMapKeyRef:
+            name: my-cluster-kafka-config
+            key: advertised-hostnames.config
+      - name: POSTGRES_URI
+        valueFrom:
+          secretKeyRef:
+            name: realtime-pguser-postgres
+            key: uri
+  - name: availability-rule
+    image: crunchydata/postgres-realtime-demo:latest
+    imagePullPolicy: IfNotPresent
+    command: ['python3', '/app/workers/availability_rule.py']
+    env:
+      - name: STRIMZI_KAFKA_BOOTSTRAP_SERVERS
+        valueFrom:
+          configMapKeyRef:
+            name: my-cluster-kafka-config
+            key: advertised-hostnames.config
+      - name: POSTGRES_URI
+        valueFrom:
+          secretKeyRef:
+            name: realtime-pguser-postgres
+            key: uri
+  - name: availability
+    image: crunchydata/postgres-realtime-demo:latest
+    imagePullPolicy: IfNotPresent
+    command: ['python3', '/app/workers/availability.py']
+    env:
+      - name: STRIMZI_KAFKA_BOOTSTRAP_SERVERS
+        valueFrom:
+          configMapKeyRef:
+            name: my-cluster-kafka-config
+            key: advertised-hostnames.config
+      - name: POSTGRES_URI
+        valueFrom:
+          secretKeyRef:
+            name: realtime-pguser-postgres
+            key: uri
+  - name: unavailability
+    image: crunchydata/postgres-realtime-demo:latest
+    imagePullPolicy: IfNotPresent
+    command: ['python3', '/app/workers/unavailability.py']
+    env:
+      - name: STRIMZI_KAFKA_BOOTSTRAP_SERVERS
+        valueFrom:
+          configMapKeyRef:
+            name: my-cluster-kafka-config
+            key: advertised-hostnames.config
+      - name: POSTGRES_URI
+        valueFrom:
+          secretKeyRef:
+            name: realtime-pguser-postgres
+            key: uri
